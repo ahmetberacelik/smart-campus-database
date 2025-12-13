@@ -15,3 +15,4 @@ SELECT u.id, d.id, 'EMP002', 'Prof. Dr.', 'Mühendislik Fakültesi B-205'
 FROM users u, departments d
 WHERE u.email = 'ayse.demir@smartcampus.edu.tr' AND d.code = 'EEE';
 
+

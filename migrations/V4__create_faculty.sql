@@ -18,3 +18,4 @@ CREATE TABLE IF NOT EXISTS faculty (
     INDEX idx_faculty_department (department_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+

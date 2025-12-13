@@ -33,3 +33,4 @@ SELECT u.id, d.id, '20230001', '2023-09-15', 3.60, 3.60
 FROM users u, departments d
 WHERE u.email = 'emre.arslan@smartcampus.edu.tr' AND d.code = 'BA';
 
+

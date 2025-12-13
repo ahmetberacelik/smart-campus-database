@@ -1,6 +1,8 @@
 -- =============================================
 -- Smart Campus Database - Initialization Script
--- Description: Tüm tabloları oluşturur (Migration V1-V5)
+-- Description: Tüm tabloları oluşturur (Migration V1-V13)
+-- Part 1: Kimlik Doğrulama ve Kullanıcı Yönetimi
+-- Part 2: Akademik Yönetim ve GPS Yoklama
 -- Usage: Docker container başlatıldığında otomatik çalışır
 -- =============================================
 
@@ -129,7 +131,182 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================
+-- V6: Courses Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS courses (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) NOT NULL UNIQUE COMMENT 'Ders kodu (Örn: CENG301)',
+    name VARCHAR(150) NOT NULL COMMENT 'Ders adı',
+    description TEXT COMMENT 'Ders açıklaması',
+    credits INT NOT NULL DEFAULT 3 COMMENT 'Kredi sayısı',
+    ects INT NOT NULL DEFAULT 5 COMMENT 'ECTS kredisi',
+    department_id BIGINT NOT NULL COMMENT 'Bağlı olduğu bölüm',
+    syllabus_url VARCHAR(255) COMMENT 'Ders izlencesi URL',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE RESTRICT,
+    
+    INDEX idx_courses_code (code),
+    INDEX idx_courses_department (department_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V7: Course Prerequisites Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS course_prerequisites (
+    course_id BIGINT NOT NULL COMMENT 'Ana ders',
+    prerequisite_id BIGINT NOT NULL COMMENT 'Ön koşul ders',
+    
+    PRIMARY KEY (course_id, prerequisite_id),
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (prerequisite_id) REFERENCES courses(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V8: Course Sections Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS course_sections (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    course_id BIGINT NOT NULL COMMENT 'Hangi derse ait',
+    section_number VARCHAR(10) NOT NULL COMMENT 'Bölüm numarası (01, 02)',
+    semester ENUM('FALL', 'SPRING', 'SUMMER') NOT NULL COMMENT 'Dönem',
+    year INT NOT NULL COMMENT 'Akademik yıl',
+    instructor_id BIGINT NOT NULL COMMENT 'Dersi veren öğretim üyesi',
+    capacity INT NOT NULL DEFAULT 40 COMMENT 'Kontenjan',
+    enrolled_count INT NOT NULL DEFAULT 0 COMMENT 'Kayıtlı öğrenci sayısı',
+    schedule_json JSON COMMENT 'Ders programı (gün, saat, derslik)',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (instructor_id) REFERENCES faculty(id) ON DELETE RESTRICT,
+    
+    UNIQUE KEY uk_section (course_id, section_number, semester, year),
+    INDEX idx_sections_semester_year (semester, year),
+    INDEX idx_sections_instructor (instructor_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V9: Enrollments Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS enrollments (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    student_id BIGINT NOT NULL COMMENT 'Öğrenci',
+    section_id BIGINT NOT NULL COMMENT 'Ders bölümü',
+    status ENUM('ENROLLED', 'DROPPED', 'COMPLETED', 'FAILED') NOT NULL DEFAULT 'ENROLLED' COMMENT 'Kayıt durumu',
+    enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Kayıt tarihi',
+    midterm_grade DECIMAL(5,2) COMMENT 'Vize notu (0-100)',
+    final_grade DECIMAL(5,2) COMMENT 'Final notu (0-100)',
+    homework_grade DECIMAL(5,2) COMMENT 'Ödev notu (0-100)',
+    letter_grade VARCHAR(2) COMMENT 'Harf notu (AA, BA, BB vb.)',
+    grade_point DECIMAL(3,2) COMMENT '4.0 üzerinden not',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE CASCADE,
+    
+    UNIQUE KEY uk_enrollment (student_id, section_id),
+    INDEX idx_enrollments_student (student_id),
+    INDEX idx_enrollments_section (section_id),
+    INDEX idx_enrollments_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V10: Classrooms Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS classrooms (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    building VARCHAR(50) NOT NULL COMMENT 'Bina adı',
+    room_number VARCHAR(20) NOT NULL COMMENT 'Oda numarası',
+    capacity INT NOT NULL COMMENT 'Kapasite',
+    latitude DECIMAL(10, 8) NOT NULL COMMENT 'GPS enlem koordinatı',
+    longitude DECIMAL(11, 8) NOT NULL COMMENT 'GPS boylam koordinatı',
+    features_json JSON COMMENT 'Derslik özellikleri',
+    is_active TINYINT(1) DEFAULT 1 COMMENT 'Aktif mi?',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_room (building, room_number),
+    INDEX idx_classrooms_building (building)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V11: Attendance Sessions Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS attendance_sessions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    section_id BIGINT NOT NULL COMMENT 'Hangi ders bölümü',
+    instructor_id BIGINT NOT NULL COMMENT 'Yoklamayı açan öğretim üyesi',
+    classroom_id BIGINT COMMENT 'Derslik',
+    date DATE NOT NULL COMMENT 'Yoklama tarihi',
+    start_time TIME NOT NULL COMMENT 'Başlangıç saati',
+    end_time TIME COMMENT 'Bitiş saati',
+    latitude DECIMAL(10, 8) NOT NULL COMMENT 'Yoklama merkez GPS enlem',
+    longitude DECIMAL(11, 8) NOT NULL COMMENT 'Yoklama merkez GPS boylam',
+    geofence_radius INT DEFAULT 15 COMMENT 'Geçerli yarıçap (metre)',
+    qr_code VARCHAR(255) UNIQUE COMMENT 'QR kod',
+    qr_expiry TIMESTAMP NULL COMMENT 'QR kod geçerlilik süresi',
+    status ENUM('ACTIVE', 'CLOSED') DEFAULT 'ACTIVE' COMMENT 'Oturum durumu',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE CASCADE,
+    FOREIGN KEY (instructor_id) REFERENCES faculty(id) ON DELETE RESTRICT,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE SET NULL,
+    
+    INDEX idx_attendance_sessions_section_date (section_id, date),
+    INDEX idx_attendance_sessions_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V12: Attendance Records Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS attendance_records (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    session_id BIGINT NOT NULL COMMENT 'Yoklama oturumu',
+    student_id BIGINT NOT NULL COMMENT 'Öğrenci',
+    check_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Yoklama verme zamanı',
+    latitude DECIMAL(10, 8) NOT NULL COMMENT 'Öğrencinin GPS enlemi',
+    longitude DECIMAL(11, 8) NOT NULL COMMENT 'Öğrencinin GPS boylamı',
+    distance_from_center DECIMAL(10, 2) NOT NULL COMMENT 'Merkeze uzaklık (metre)',
+    ip_address VARCHAR(45) COMMENT 'Öğrencinin IP adresi',
+    is_flagged TINYINT(1) DEFAULT 0 COMMENT 'Şüpheli mi?',
+    flag_reason VARCHAR(255) COMMENT 'İşaretleme sebebi',
+    check_in_method ENUM('GPS', 'QR_CODE', 'MANUAL') DEFAULT 'GPS' COMMENT 'Yoklama yöntemi',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (session_id) REFERENCES attendance_sessions(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    
+    UNIQUE KEY uk_attendance (session_id, student_id),
+    INDEX idx_attendance_records_student (student_id),
+    INDEX idx_attendance_records_flagged (is_flagged)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V13: Excuse Requests Table (Part 2)
+-- =============================================
+CREATE TABLE IF NOT EXISTS excuse_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    student_id BIGINT NOT NULL COMMENT 'Mazeret sahibi öğrenci',
+    session_id BIGINT NOT NULL COMMENT 'İlgili yoklama oturumu',
+    reason TEXT NOT NULL COMMENT 'Mazeret açıklaması',
+    document_url VARCHAR(255) COMMENT 'Belge dosyası URL',
+    status ENUM('PENDING', 'APPROVED', 'REJECTED') DEFAULT 'PENDING' COMMENT 'Talep durumu',
+    reviewed_by BIGINT COMMENT 'Onaylayan/reddeden öğretim üyesi',
+    reviewed_at TIMESTAMP NULL COMMENT 'İnceleme tarihi',
+    reviewer_notes TEXT COMMENT 'İnceleme notları',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (session_id) REFERENCES attendance_sessions(id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES faculty(id) ON DELETE SET NULL,
+    
+    INDEX idx_excuse_requests_student (student_id),
+    INDEX idx_excuse_requests_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
 -- Initialization Complete
 -- =============================================
-SELECT 'Smart Campus Database initialized successfully!' AS status;
-
+SELECT 'Smart Campus Database initialized successfully! (Part 1 + Part 2)' AS status;

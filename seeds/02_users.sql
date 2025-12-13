@@ -21,3 +21,4 @@ INSERT INTO users (email, password_hash, first_name, last_name, phone_number, ro
 ('fatma.sahin@smartcampus.edu.tr', '$2a$10$EqKcp1WFKVQISheBxkV8qOEb.OMjSPvKnHJPLAl.pL5aNLwzVy5Aq', 'Fatma', 'Şahin', '05441234567', 'STUDENT', 1, 1),
 ('emre.arslan@smartcampus.edu.tr', '$2a$10$EqKcp1WFKVQISheBxkV8qOEb.OMjSPvKnHJPLAl.pL5aNLwzVy5Aq', 'Emre', 'Arslan', '05451234567', 'STUDENT', 1, 1);
 
+

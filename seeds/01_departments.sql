@@ -9,3 +9,4 @@ INSERT INTO departments (name, code, faculty_name) VALUES
 ('Makine Mühendisliği', 'ME', 'Mühendislik Fakültesi'),
 ('İşletme', 'BA', 'İktisadi ve İdari Bilimler Fakültesi');
 
+
