@@ -7,6 +7,11 @@
 -- Database seç
 USE smart_campus;
 
+-- UTF-8 karakter kodlaması ayarla
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+SET collation_connection = 'utf8mb4_unicode_ci';
+
 -- =============================================
 -- 01: Departments (Bölümler)
 -- =============================================
@@ -207,7 +212,7 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 (9, '01', 'FALL', 2024, 1, 50, 0, '{"slots": [{"day": "MONDAY", "start": "11:00", "end": "12:50", "classroom_id": 3}, {"day": "WEDNESDAY", "start": "11:00", "end": "12:50", "classroom_id": 3}]}'),
 
 -- BA101 - Prof. Dr. Ayşe Kaya (faculty_id = 2)
-(17, '01', 'FALL', 2024, 2, 100, 0, '{"slots": [{"day": "FRIDAY", "start": "09:00", "end": "11:50", "classroom_id": 10}]}');
+(17, '01', 'FALL', 2024, 2, 100, 0, '{"slots": [{"day": "FRIDAY", "start": "09:00", "end": "11:50", "classroom_id": 10}]}' );
 
 -- =============================================
 -- 09: Enrollments (Ders Kayıtları) - Part 2
