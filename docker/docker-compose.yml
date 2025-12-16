@@ -35,7 +35,7 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - "8081:80"
+      - "8090:80"
     depends_on:
       mysql:
         condition: service_healthy
