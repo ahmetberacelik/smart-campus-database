@@ -173,17 +173,21 @@ CREATE TABLE IF NOT EXISTS course_sections (
     semester ENUM('FALL', 'SPRING', 'SUMMER') NOT NULL COMMENT 'Dönem',
     year INT NOT NULL COMMENT 'Akademik yıl',
     instructor_id BIGINT NOT NULL COMMENT 'Dersi veren öğretim üyesi',
+    classroom_id BIGINT NULL COMMENT 'Derslik (GPS koordinatları için)',
     capacity INT NOT NULL DEFAULT 40 COMMENT 'Kontenjan',
     enrolled_count INT NOT NULL DEFAULT 0 COMMENT 'Kayıtlı öğrenci sayısı',
     schedule_json JSON COMMENT 'Ders programı (gün, saat, derslik)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
     FOREIGN KEY (instructor_id) REFERENCES faculty(id) ON DELETE RESTRICT,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE SET NULL,
     
     UNIQUE KEY uk_section (course_id, section_number, semester, year),
     INDEX idx_sections_semester_year (semester, year),
-    INDEX idx_sections_instructor (instructor_id)
+    INDEX idx_sections_instructor (instructor_id),
+    INDEX idx_sections_classroom (classroom_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================

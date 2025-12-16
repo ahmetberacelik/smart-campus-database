@@ -276,10 +276,12 @@ Bir dersin dönemsel açılan bölümlerini (section) tutar.
 | semester | ENUM | NOT NULL | 'FALL', 'SPRING', 'SUMMER' |
 | year | INT | NOT NULL | Akademik yıl (Örn: 2024) |
 | instructor_id | BIGINT | FK, NOT NULL | Dersi veren öğretim üyesi |
+| classroom_id | BIGINT | FK, NULL | Derslik (GPS koordinatları için) |
 | capacity | INT | NOT NULL, DEFAULT 40 | Kontenjan |
 | enrolled_count | INT | NOT NULL, DEFAULT 0 | Kayıtlı öğrenci sayısı |
 | schedule_json | JSON | NULL | Ders programı (gün, saat, derslik) |
 | created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Oluşturma tarihi |
+| updated_at | TIMESTAMP | ON UPDATE CURRENT_TIMESTAMP | Güncelleme tarihi |
 | | | UNIQUE (course_id, section_number, semester, year) | Benzersizlik |
 
 **schedule_json örneği:**
