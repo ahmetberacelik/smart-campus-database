@@ -164,7 +164,25 @@ CREATE TABLE IF NOT EXISTS course_prerequisites (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================
--- V8: Course Sections Table (Part 2)
+-- V8: Classrooms Table (Part 2) - MUST BE BEFORE course_sections
+-- =============================================
+CREATE TABLE IF NOT EXISTS classrooms (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    building VARCHAR(50) NOT NULL COMMENT 'Bina adı',
+    room_number VARCHAR(20) NOT NULL COMMENT 'Oda numarası',
+    capacity INT NOT NULL COMMENT 'Kapasite',
+    latitude DECIMAL(10, 8) NOT NULL COMMENT 'GPS enlem koordinatı',
+    longitude DECIMAL(11, 8) NOT NULL COMMENT 'GPS boylam koordinatı',
+    features_json JSON COMMENT 'Derslik özellikleri',
+    is_active TINYINT(1) DEFAULT 1 COMMENT 'Aktif mi?',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    UNIQUE KEY uk_room (building, room_number),
+    INDEX idx_classrooms_building (building)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V9: Course Sections Table (Part 2)
 -- =============================================
 CREATE TABLE IF NOT EXISTS course_sections (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -216,23 +234,7 @@ CREATE TABLE IF NOT EXISTS enrollments (
     INDEX idx_enrollments_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =============================================
--- V10: Classrooms Table (Part 2)
--- =============================================
-CREATE TABLE IF NOT EXISTS classrooms (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    building VARCHAR(50) NOT NULL COMMENT 'Bina adı',
-    room_number VARCHAR(20) NOT NULL COMMENT 'Oda numarası',
-    capacity INT NOT NULL COMMENT 'Kapasite',
-    latitude DECIMAL(10, 8) NOT NULL COMMENT 'GPS enlem koordinatı',
-    longitude DECIMAL(11, 8) NOT NULL COMMENT 'GPS boylam koordinatı',
-    features_json JSON COMMENT 'Derslik özellikleri',
-    is_active TINYINT(1) DEFAULT 1 COMMENT 'Aktif mi?',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
-    UNIQUE KEY uk_room (building, room_number),
-    INDEX idx_classrooms_building (building)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- (Classrooms table moved above course_sections)
 
 -- =============================================
 -- V11: Attendance Sessions Table (Part 2)
