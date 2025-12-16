@@ -244,22 +244,23 @@ CREATE TABLE IF NOT EXISTS attendance_sessions (
     section_id BIGINT NOT NULL COMMENT 'Hangi ders bölümü',
     instructor_id BIGINT NOT NULL COMMENT 'Yoklamayı açan öğretim üyesi',
     classroom_id BIGINT COMMENT 'Derslik',
-    date DATE NOT NULL COMMENT 'Yoklama tarihi',
+    session_date DATE NOT NULL COMMENT 'Yoklama tarihi',
     start_time TIME NOT NULL COMMENT 'Başlangıç saati',
     end_time TIME COMMENT 'Bitiş saati',
     latitude DECIMAL(10, 8) NOT NULL COMMENT 'Yoklama merkez GPS enlem',
     longitude DECIMAL(11, 8) NOT NULL COMMENT 'Yoklama merkez GPS boylam',
     geofence_radius INT DEFAULT 15 COMMENT 'Geçerli yarıçap (metre)',
     qr_code VARCHAR(255) UNIQUE COMMENT 'QR kod',
-    qr_expiry TIMESTAMP NULL COMMENT 'QR kod geçerlilik süresi',
+    qr_code_generated_at TIMESTAMP NULL COMMENT 'QR kod oluşturulma zamanı',
     status ENUM('ACTIVE', 'CLOSED') DEFAULT 'ACTIVE' COMMENT 'Oturum durumu',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE CASCADE,
     FOREIGN KEY (instructor_id) REFERENCES faculty(id) ON DELETE RESTRICT,
     FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE SET NULL,
     
-    INDEX idx_attendance_sessions_section_date (section_id, date),
+    INDEX idx_attendance_sessions_section_date (section_id, session_date),
     INDEX idx_attendance_sessions_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -270,22 +271,27 @@ CREATE TABLE IF NOT EXISTS attendance_records (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     session_id BIGINT NOT NULL COMMENT 'Yoklama oturumu',
     student_id BIGINT NOT NULL COMMENT 'Öğrenci',
-    check_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Yoklama verme zamanı',
-    latitude DECIMAL(10, 8) NOT NULL COMMENT 'Öğrencinin GPS enlemi',
-    longitude DECIMAL(11, 8) NOT NULL COMMENT 'Öğrencinin GPS boylamı',
-    distance_from_center DECIMAL(10, 2) NOT NULL COMMENT 'Merkeze uzaklık (metre)',
-    ip_address VARCHAR(45) COMMENT 'Öğrencinin IP adresi',
+    status ENUM('PRESENT', 'ABSENT', 'LATE', 'EXCUSED') NOT NULL DEFAULT 'PRESENT' COMMENT 'Yoklama durumu',
+    check_in_time TIMESTAMP NULL COMMENT 'Yoklama verme zamanı',
+    check_in_method ENUM('GPS', 'QR_CODE', 'MANUAL') DEFAULT 'GPS' COMMENT 'Yoklama yöntemi',
+    latitude DECIMAL(10, 8) COMMENT 'Öğrencinin GPS enlemi',
+    longitude DECIMAL(11, 8) COMMENT 'Öğrencinin GPS boylamı',
+    distance_from_classroom DECIMAL(10, 2) COMMENT 'Derslikten uzaklık (metre)',
+    gps_accuracy DECIMAL(10, 2) COMMENT 'GPS doğruluğu (metre)',
     is_flagged TINYINT(1) DEFAULT 0 COMMENT 'Şüpheli mi?',
     flag_reason VARCHAR(255) COMMENT 'İşaretleme sebebi',
-    check_in_method ENUM('GPS', 'QR_CODE', 'MANUAL') DEFAULT 'GPS' COMMENT 'Yoklama yöntemi',
+    ip_address VARCHAR(45) COMMENT 'Öğrencinin IP adresi',
+    device_info VARCHAR(500) COMMENT 'Cihaz bilgisi',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (session_id) REFERENCES attendance_sessions(id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     
     UNIQUE KEY uk_attendance (session_id, student_id),
     INDEX idx_attendance_records_student (student_id),
-    INDEX idx_attendance_records_flagged (is_flagged)
+    INDEX idx_attendance_records_flagged (is_flagged),
+    INDEX idx_attendance_records_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================
