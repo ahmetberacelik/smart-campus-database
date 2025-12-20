@@ -322,3 +322,221 @@ CREATE TABLE IF NOT EXISTS excuse_requests (
 -- Initialization Complete
 -- =============================================
 SELECT 'Smart Campus Database initialized successfully! (Part 1 + Part 2)' AS status;
+
+-- =============================================
+-- PART 3: Meal Service, Event Management, Scheduling
+-- =============================================
+
+-- =============================================
+-- V14: Cafeterias Table (Part 3 - Meal Service)
+-- =============================================
+CREATE TABLE IF NOT EXISTS cafeterias (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL COMMENT 'Yemekhane adı',
+    location VARCHAR(200) COMMENT 'Konum açıklaması',
+    capacity INT NOT NULL DEFAULT 200 COMMENT 'Kapasite',
+    latitude DECIMAL(10, 8) COMMENT 'GPS enlem',
+    longitude DECIMAL(11, 8) COMMENT 'GPS boylam',
+    opening_time TIME DEFAULT '07:00:00' COMMENT 'Açılış saati',
+    closing_time TIME DEFAULT '21:00:00' COMMENT 'Kapanış saati',
+    is_active TINYINT(1) DEFAULT 1 COMMENT 'Aktif mi?',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    INDEX idx_cafeteria_active (is_active),
+    INDEX idx_cafeteria_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V15: Meal Menus Table (Part 3 - Meal Service)
+-- =============================================
+CREATE TABLE IF NOT EXISTS meal_menus (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cafeteria_id BIGINT NOT NULL COMMENT 'Yemekhane referansı',
+    menu_date DATE NOT NULL COMMENT 'Menü tarihi',
+    meal_type ENUM('BREAKFAST', 'LUNCH', 'DINNER') NOT NULL COMMENT 'Öğün tipi',
+    items_json JSON NOT NULL COMMENT 'Yemek öğeleri listesi',
+    nutrition_json JSON COMMENT 'Besin değerleri',
+    price DECIMAL(10, 2) NOT NULL DEFAULT 0.00 COMMENT 'Ücret (TL)',
+    is_vegan TINYINT(1) DEFAULT 0,
+    is_vegetarian TINYINT(1) DEFAULT 0,
+    is_published TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (cafeteria_id) REFERENCES cafeterias(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_menu (cafeteria_id, menu_date, meal_type),
+    INDEX idx_menu_date (menu_date),
+    INDEX idx_menu_published (is_published)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V16: Wallets Table (Part 3 - Payment)
+-- =============================================
+CREATE TABLE IF NOT EXISTS wallets (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE COMMENT 'Kullanıcı referansı',
+    balance DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    currency VARCHAR(3) DEFAULT 'TRY',
+    is_scholarship TINYINT(1) DEFAULT 0,
+    daily_scholarship_limit INT DEFAULT 2,
+    scholarship_used_today INT DEFAULT 0,
+    last_scholarship_reset DATE,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_wallet_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V17: Transactions Table (Part 3 - Payment)
+-- =============================================
+CREATE TABLE IF NOT EXISTS transactions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    wallet_id BIGINT NOT NULL,
+    type ENUM('CREDIT', 'DEBIT') NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    balance_after DECIMAL(10, 2) NOT NULL,
+    reference_type ENUM('TOPUP', 'MEAL', 'EVENT', 'REFUND') NOT NULL,
+    reference_id BIGINT,
+    description VARCHAR(255),
+    payment_method VARCHAR(50),
+    payment_reference VARCHAR(255),
+    status ENUM('PENDING', 'COMPLETED', 'FAILED', 'CANCELLED') DEFAULT 'COMPLETED',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (wallet_id) REFERENCES wallets(id) ON DELETE CASCADE,
+    INDEX idx_transaction_wallet (wallet_id),
+    INDEX idx_transaction_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V18: Meal Reservations Table (Part 3 - Meal Service)
+-- =============================================
+CREATE TABLE IF NOT EXISTS meal_reservations (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    menu_id BIGINT NOT NULL,
+    cafeteria_id BIGINT NOT NULL,
+    reservation_date DATE NOT NULL,
+    meal_type ENUM('BREAKFAST', 'LUNCH', 'DINNER') NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    qr_code VARCHAR(100) NOT NULL UNIQUE,
+    is_scholarship_used TINYINT(1) DEFAULT 0,
+    status ENUM('RESERVED', 'USED', 'CANCELLED', 'EXPIRED') DEFAULT 'RESERVED',
+    used_at TIMESTAMP NULL,
+    cancelled_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES meal_menus(id) ON DELETE RESTRICT,
+    FOREIGN KEY (cafeteria_id) REFERENCES cafeterias(id) ON DELETE RESTRICT,
+    INDEX idx_reservation_user (user_id),
+    INDEX idx_reservation_qr (qr_code),
+    INDEX idx_reservation_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V19: Events Table (Part 3 - Event Management)
+-- =============================================
+CREATE TABLE IF NOT EXISTS events (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    category ENUM('CONFERENCE', 'WORKSHOP', 'SEMINAR', 'SOCIAL', 'SPORTS', 'CULTURAL', 'CAREER') NOT NULL,
+    event_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME,
+    location VARCHAR(200) NOT NULL,
+    capacity INT NOT NULL DEFAULT 100,
+    registered_count INT NOT NULL DEFAULT 0,
+    registration_deadline TIMESTAMP NULL,
+    is_paid TINYINT(1) DEFAULT 0,
+    price DECIMAL(10, 2) DEFAULT 0.00,
+    organizer_id BIGINT NOT NULL,
+    image_url VARCHAR(255),
+    status ENUM('DRAFT', 'PUBLISHED', 'CANCELLED', 'COMPLETED') DEFAULT 'DRAFT',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE RESTRICT,
+    INDEX idx_event_date (event_date),
+    INDEX idx_event_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V20: Event Registrations Table (Part 3 - Event Management)
+-- =============================================
+CREATE TABLE IF NOT EXISTS event_registrations (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    event_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    qr_code VARCHAR(100) NOT NULL UNIQUE,
+    checked_in TINYINT(1) DEFAULT 0,
+    checked_in_at TIMESTAMP NULL,
+    status ENUM('REGISTERED', 'WAITLIST', 'CANCELLED', 'ATTENDED') DEFAULT 'REGISTERED',
+    waitlist_position INT NULL,
+    custom_fields_json JSON,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_event_registration (event_id, user_id),
+    INDEX idx_registration_qr (qr_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V21: Schedules Table (Part 3 - Course Scheduling)
+-- =============================================
+CREATE TABLE IF NOT EXISTS schedules (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    section_id BIGINT NOT NULL,
+    day_of_week ENUM('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY') NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    classroom_id BIGINT NOT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE CASCADE,
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE RESTRICT,
+    INDEX idx_schedule_section (section_id),
+    INDEX idx_schedule_classroom (classroom_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V22: Classroom Reservations Table (Part 3 - Scheduling)
+-- =============================================
+CREATE TABLE IF NOT EXISTS classroom_reservations (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    classroom_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    reservation_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    purpose VARCHAR(255) NOT NULL,
+    status ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED') DEFAULT 'PENDING',
+    approved_by BIGINT NULL,
+    approved_at TIMESTAMP NULL,
+    rejection_reason VARCHAR(255),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (classroom_id) REFERENCES classrooms(id) ON DELETE RESTRICT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_reservation_classroom (classroom_id),
+    INDEX idx_reservation_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- Full Initialization Complete (Part 1 + 2 + 3)
+-- =============================================
+SELECT 'Smart Campus Database initialized successfully! (Part 1 + Part 2 + Part 3)' AS status;

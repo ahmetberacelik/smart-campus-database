@@ -451,7 +451,7 @@ INSERT INTO enrollments (student_id, section_id, status) VALUES
 (5, 19, 'ENROLLED');  -- BA101 Section 01
 
 -- =============================================
--- Seed Complete
+-- Seed Complete (Part 1 + Part 2)
 -- =============================================
 SELECT 'Seed data inserted successfully! (Part 1 + Part 2)' AS status;
 SELECT CONCAT('Total Users: ', COUNT(*)) AS info FROM users;
@@ -462,3 +462,127 @@ SELECT CONCAT('Total Courses: ', COUNT(*)) AS info FROM courses;
 SELECT CONCAT('Total Course Sections: ', COUNT(*)) AS info FROM course_sections;
 SELECT CONCAT('Total Classrooms: ', COUNT(*)) AS info FROM classrooms;
 SELECT CONCAT('Total Enrollments: ', COUNT(*)) AS info FROM enrollments;
+
+-- =============================================
+-- PART 3: Meal Service, Event Management, Scheduling
+-- =============================================
+
+-- =============================================
+-- 10: Cafeterias (Yemekhaneler) - Part 3
+-- =============================================
+INSERT INTO cafeterias (name, location, capacity, latitude, longitude, opening_time, closing_time) VALUES
+('Ana Yemekhane', 'Merkez Kampüs, A Blok Zemin Kat', 500, 41.10500000, 29.02500000, '07:00:00', '21:00:00'),
+('Mühendislik Yemekhanesi', 'Mühendislik Fakültesi, B Blok', 200, 41.10540000, 29.02530000, '11:00:00', '15:00:00');
+
+-- =============================================
+-- 11: Meal Menus (Yemek Menüleri) - Part 3
+-- =============================================
+INSERT INTO meal_menus (cafeteria_id, menu_date, meal_type, items_json, nutrition_json, price, is_vegan, is_vegetarian, is_published) VALUES
+-- Ana Yemekhane Öğle Menüleri
+(1, CURDATE(), 'LUNCH', 
+ '{"main": "Tavuk Sote", "soup": "Mercimek Çorbası", "side": "Pilav", "salad": "Mevsim Salata", "dessert": "Sütlaç"}',
+ '{"calories": 850, "protein": 35, "carbs": 95, "fat": 28}',
+ 25.00, 0, 0, 1),
+(1, CURDATE(), 'DINNER', 
+ '{"main": "Karnıyarık", "soup": "Ezogelin Çorbası", "side": "Bulgur Pilavı", "salad": "Cacık", "dessert": "Meyve"}',
+ '{"calories": 780, "protein": 22, "carbs": 88, "fat": 32}',
+ 25.00, 0, 0, 1),
+(1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'LUNCH', 
+ '{"main": "Izgara Köfte", "soup": "Domates Çorbası", "side": "Makarna", "salad": "Çoban Salata", "dessert": "Baklava"}',
+ '{"calories": 920, "protein": 42, "carbs": 78, "fat": 38}',
+ 28.00, 0, 0, 1),
+(1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), 'DINNER', 
+ '{"main": "Sebzeli Güveç", "soup": "Yayla Çorbası", "side": "Pirinç Pilavı", "salad": "Turşu", "dessert": "Komposto"}',
+ '{"calories": 650, "protein": 18, "carbs": 82, "fat": 22}',
+ 22.00, 1, 1, 1),
+-- Mühendislik Yemekhanesi
+(2, CURDATE(), 'LUNCH', 
+ '{"main": "Tavuk Döner", "soup": "Mercimek Çorbası", "side": "Pilav", "salad": "Mevsim Salata", "dessert": "Meyve"}',
+ '{"calories": 780, "protein": 32, "carbs": 85, "fat": 26}',
+ 22.00, 0, 0, 1);
+
+-- =============================================
+-- 12: Wallets (Cüzdanlar) - Part 3
+-- =============================================
+-- Tüm kullanıcılar için cüzdan oluştur
+INSERT INTO wallets (user_id, balance, is_scholarship, daily_scholarship_limit, is_active)
+SELECT 
+    u.id,
+    CASE 
+        WHEN u.role = 'STUDENT' THEN ROUND(50 + RAND() * 150, 2)
+        WHEN u.role = 'FACULTY' THEN ROUND(100 + RAND() * 200, 2)
+        ELSE 500.00
+    END,
+    CASE WHEN u.role = 'STUDENT' AND u.id % 3 = 0 THEN 1 ELSE 0 END,
+    2,
+    1
+FROM users u;
+
+-- =============================================
+-- 13: Events (Etkinlikler) - Part 3
+-- =============================================
+INSERT INTO events (title, description, category, event_date, start_time, end_time, location, capacity, registered_count, registration_deadline, is_paid, price, organizer_id, status) VALUES
+('Yazılım Kariyer Günleri 2025', 
+ 'Türkiye''nin önde gelen teknoloji şirketlerinden uzmanlarla kariyer fırsatlarını keşfedin.',
+ 'CAREER', 
+ DATE_ADD(CURDATE(), INTERVAL 7 DAY), 
+ '10:00:00', '17:00:00',
+ 'Kongre Merkezi, Ana Salon',
+ 300, 0,
+ DATE_ADD(CURDATE(), INTERVAL 5 DAY),
+ 0, 0.00,
+ 1,
+ 'PUBLISHED'),
+('React.js Workshop', 
+ 'React.js ile modern web uygulaması geliştirmeyi öğrenin. Hooks, Context API ve best practices.',
+ 'WORKSHOP', 
+ DATE_ADD(CURDATE(), INTERVAL 10 DAY), 
+ '14:00:00', '18:00:00',
+ 'Bilgisayar Merkezi, LAB-1',
+ 30, 0,
+ DATE_ADD(CURDATE(), INTERVAL 8 DAY),
+ 1, 50.00,
+ 1,
+ 'PUBLISHED'),
+('Yapay Zeka ve Gelecek Konferansı', 
+ 'AI, Machine Learning ve Deep Learning konularında akademisyenler sunum yapacak.',
+ 'CONFERENCE', 
+ DATE_ADD(CURDATE(), INTERVAL 14 DAY), 
+ '09:00:00', '18:00:00',
+ 'Mühendislik A, A-201 Amfi',
+ 150, 0,
+ DATE_ADD(CURDATE(), INTERVAL 12 DAY),
+ 0, 0.00,
+ 1,
+ 'PUBLISHED'),
+('Bahar Şenliği 2025', 
+ 'Canlı müzik, yemek standları ve eğlenceli aktivitelerle dolu bir gün.',
+ 'SOCIAL', 
+ DATE_ADD(CURDATE(), INTERVAL 21 DAY), 
+ '12:00:00', '22:00:00',
+ 'Merkez Kampüs Çim Alan',
+ 1000, 0,
+ DATE_ADD(CURDATE(), INTERVAL 20 DAY),
+ 0, 0.00,
+ 1,
+ 'PUBLISHED'),
+('Fakülteler Arası Futbol Turnuvası', 
+ 'Fakülteler arası futbol turnuvası! Takımınızı oluşturun ve şampiyonluk için yarışın.',
+ 'SPORTS', 
+ DATE_ADD(CURDATE(), INTERVAL 30 DAY), 
+ '10:00:00', '18:00:00',
+ 'Spor Kompleksi Futbol Sahası',
+ 200, 0,
+ DATE_ADD(CURDATE(), INTERVAL 25 DAY),
+ 0, 0.00,
+ 1,
+ 'DRAFT');
+
+-- =============================================
+-- Full Seed Complete (Part 1 + Part 2 + Part 3)
+-- =============================================
+SELECT 'Seed data inserted successfully! (Part 1 + Part 2 + Part 3)' AS status;
+SELECT CONCAT('Total Cafeterias: ', COUNT(*)) AS info FROM cafeterias;
+SELECT CONCAT('Total Meal Menus: ', COUNT(*)) AS info FROM meal_menus;
+SELECT CONCAT('Total Wallets: ', COUNT(*)) AS info FROM wallets;
+SELECT CONCAT('Total Events: ', COUNT(*)) AS info FROM events;
