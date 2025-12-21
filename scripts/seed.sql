@@ -586,3 +586,66 @@ SELECT CONCAT('Total Cafeterias: ', COUNT(*)) AS info FROM cafeterias;
 SELECT CONCAT('Total Meal Menus: ', COUNT(*)) AS info FROM meal_menus;
 SELECT CONCAT('Total Wallets: ', COUNT(*)) AS info FROM wallets;
 SELECT CONCAT('Total Events: ', COUNT(*)) AS info FROM events;
+
+-- =============================================
+-- 14: Schedules (Ders Programları) - Part 3
+-- course_sections verilerine göre schedule oluştur
+-- =============================================
+INSERT INTO schedules (section_id, day_of_week, start_time, end_time, classroom_id) VALUES
+-- 2024 FALL - CENG Dersleri
+(1, 'MONDAY', '09:00:00', '10:50:00', 1),
+(1, 'WEDNESDAY', '09:00:00', '10:50:00', 1),
+(2, 'TUESDAY', '09:00:00', '10:50:00', 3),
+(2, 'THURSDAY', '09:00:00', '10:50:00', 3),
+(3, 'FRIDAY', '13:00:00', '15:50:00', 7),
+(4, 'THURSDAY', '13:00:00', '15:50:00', 8),
+(5, 'TUESDAY', '09:00:00', '10:50:00', 5),
+(5, 'THURSDAY', '09:00:00', '10:50:00', 5),
+(6, 'MONDAY', '11:00:00', '12:50:00', 7),
+(6, 'WEDNESDAY', '11:00:00', '12:50:00', 7),
+(7, 'MONDAY', '13:00:00', '14:50:00', 2),
+(7, 'WEDNESDAY', '13:00:00', '14:50:00', 2),
+(8, 'TUESDAY', '13:00:00', '14:50:00', 4),
+(8, 'THURSDAY', '13:00:00', '14:50:00', 4),
+(9, 'FRIDAY', '09:00:00', '11:50:00', 2),
+(10, 'TUESDAY', '15:00:00', '17:50:00', 8),
+
+-- 2024 FALL - EEE Dersleri
+(11, 'MONDAY', '11:00:00', '12:50:00', 5),
+(11, 'WEDNESDAY', '11:00:00', '12:50:00', 5),
+(12, 'TUESDAY', '11:00:00', '12:50:00', 3),
+(12, 'THURSDAY', '11:00:00', '12:50:00', 3),
+(13, 'FRIDAY', '09:00:00', '11:50:00', 6),
+(14, 'MONDAY', '14:00:00', '16:50:00', 6),
+
+-- 2024 FALL - ME Dersleri
+(15, 'TUESDAY', '13:00:00', '14:50:00', 3),
+(15, 'THURSDAY', '13:00:00', '14:50:00', 3),
+(16, 'FRIDAY', '13:00:00', '15:50:00', 4),
+(17, 'MONDAY', '15:00:00', '16:50:00', 4),
+(17, 'WEDNESDAY', '15:00:00', '16:50:00', 4),
+(18, 'TUESDAY', '09:00:00', '11:50:00', 3),
+
+-- 2024 FALL - BA Dersleri
+(19, 'FRIDAY', '09:00:00', '11:50:00', 10),
+(20, 'MONDAY', '14:00:00', '16:50:00', 10),
+(21, 'TUESDAY', '09:00:00', '11:50:00', 11),
+(22, 'WEDNESDAY', '14:00:00', '16:50:00', 11);
+
+SELECT CONCAT('Total Schedules: ', COUNT(*)) AS info FROM schedules;
+
+-- =============================================
+-- 15: Classroom Reservations (Örnek) - Part 3
+-- =============================================
+INSERT INTO classroom_reservations (classroom_id, user_id, reservation_date, start_time, end_time, purpose, status, notes) VALUES
+(7, 1, DATE_ADD(CURDATE(), INTERVAL 3 DAY), '10:00:00', '12:00:00', 'Proje Toplantısı', 'APPROVED', 'Yazılım Mühendisliği ekibi toplantısı'),
+(8, 1, DATE_ADD(CURDATE(), INTERVAL 5 DAY), '14:00:00', '16:00:00', 'Workshop Hazırlık', 'PENDING', 'React.js workshop için ön hazırlık'),
+(2, 22, DATE_ADD(CURDATE(), INTERVAL 7 DAY), '15:00:00', '17:00:00', 'Çalışma Grubu', 'PENDING', 'Öğrenci çalışma grubu');
+
+SELECT CONCAT('Total Classroom Reservations: ', COUNT(*)) AS info FROM classroom_reservations;
+
+-- =============================================
+-- Full Seed Complete (All Parts)
+-- =============================================
+SELECT 'All seed data inserted successfully!' AS final_status;
+
