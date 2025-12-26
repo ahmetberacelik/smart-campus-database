@@ -537,6 +537,60 @@ CREATE TABLE IF NOT EXISTS classroom_reservations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================
--- Full Initialization Complete (Part 1 + 2 + 3)
+-- V23: Notifications Table (Part 4 - Notification System)
 -- =============================================
-SELECT 'Smart Campus Database initialized successfully! (Part 1 + Part 2 + Part 3)' AS status;
+CREATE TABLE IF NOT EXISTS notifications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL COMMENT 'Bildirim alıcısı',
+    type ENUM('INFO', 'WARNING', 'SUCCESS', 'ERROR') NOT NULL DEFAULT 'INFO' COMMENT 'Bildirim tipi',
+    category ENUM('ACADEMIC', 'ATTENDANCE', 'MEAL', 'EVENT', 'PAYMENT', 'SYSTEM') NOT NULL COMMENT 'Bildirim kategorisi',
+    title VARCHAR(200) NOT NULL COMMENT 'Bildirim başlığı',
+    message TEXT NOT NULL COMMENT 'Bildirim içeriği',
+    data_json JSON NULL COMMENT 'Ek veri (link, id vb.)',
+    is_read TINYINT(1) DEFAULT 0 COMMENT 'Okundu mu?',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_notification_user (user_id),
+    INDEX idx_notification_category (category),
+    INDEX idx_notification_read (is_read),
+    INDEX idx_notification_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- V24: Notification Preferences Table (Part 4)
+-- =============================================
+CREATE TABLE IF NOT EXISTS notification_preferences (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE COMMENT 'Kullanıcı (her kullanıcı için 1 kayıt)',
+    
+    -- Email Preferences
+    email_academic TINYINT(1) DEFAULT 1,
+    email_attendance TINYINT(1) DEFAULT 1,
+    email_meal TINYINT(1) DEFAULT 0,
+    email_event TINYINT(1) DEFAULT 1,
+    email_payment TINYINT(1) DEFAULT 1,
+    email_system TINYINT(1) DEFAULT 1,
+    
+    -- Push Preferences
+    push_academic TINYINT(1) DEFAULT 1,
+    push_attendance TINYINT(1) DEFAULT 1,
+    push_meal TINYINT(1) DEFAULT 1,
+    push_event TINYINT(1) DEFAULT 1,
+    push_payment TINYINT(1) DEFAULT 1,
+    push_system TINYINT(1) DEFAULT 0,
+    
+    -- SMS Preferences (kritik bildirimler için)
+    sms_attendance TINYINT(1) DEFAULT 1,
+    sms_payment TINYINT(1) DEFAULT 0,
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================
+-- Full Initialization Complete (Part 1 + 2 + 3 + 4)
+-- =============================================
+SELECT 'Smart Campus Database initialized successfully! (Part 1 + Part 2 + Part 3 + Part 4)' AS status;

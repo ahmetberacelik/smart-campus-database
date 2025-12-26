@@ -645,7 +645,47 @@ INSERT INTO classroom_reservations (classroom_id, user_id, reservation_date, sta
 SELECT CONCAT('Total Classroom Reservations: ', COUNT(*)) AS info FROM classroom_reservations;
 
 -- =============================================
--- Full Seed Complete (All Parts)
+-- 16: Notification Preferences (Part 4) - Tüm kullanıcılar için varsayılan tercihler
 -- =============================================
-SELECT 'All seed data inserted successfully!' AS final_status;
+INSERT INTO notification_preferences (user_id) 
+SELECT id FROM users;
+
+SELECT CONCAT('Total Notification Preferences: ', COUNT(*)) AS info FROM notification_preferences;
+
+-- =============================================
+-- 17: Sample Notifications (Part 4)
+-- =============================================
+INSERT INTO notifications (user_id, type, category, title, message, data_json, is_read) VALUES
+-- Akademik Bildirimler (öğrenciler için)
+(22, 'INFO', 'ACADEMIC', 'Ders Kaydı Onaylandı', 'CENG301 - Veri Yapıları dersine kaydınız onaylandı.', '{"courseId": 1, "sectionId": 1}', 0),
+(22, 'SUCCESS', 'ACADEMIC', 'Not Girildi', 'CENG201 - Algoritma dersinden vize notunuz girildi: 85', '{"enrollmentId": 1, "grade": 85}', 1),
+(23, 'WARNING', 'ACADEMIC', 'Ders Bırakma Son Tarihi', 'Ders bırakma dönemi 3 gün sonra sona erecek.', '{"deadline": "2025-01-15"}', 0),
+
+-- Yoklama Bildirimleri
+(22, 'INFO', 'ATTENDANCE', 'Yoklama Açıldı', 'CENG301 - Veri Yapıları dersi için yoklama açıldı. 30 dakika içinde yoklama verin.', '{"sessionId": 1}', 0),
+(23, 'WARNING', 'ATTENDANCE', 'Devamsızlık Uyarısı', 'CENG202 dersinde devamsızlık oranınız %25''e ulaştı.', '{"courseId": 2, "absenceRate": 25}', 0),
+(24, 'ERROR', 'ATTENDANCE', 'Kritik Devamsızlık', 'EEE201 dersinde devamsızlık oranınız %35''e ulaştı. Dersten kalabilirsiniz!', '{"courseId": 5, "absenceRate": 35}', 0),
+
+-- Yemek Bildirimleri
+(22, 'SUCCESS', 'MEAL', 'Rezervasyon Onaylandı', 'Yarınki öğle yemeği rezervasyonunuz onaylandı.', '{"reservationId": 1, "mealType": "LUNCH"}', 1),
+(23, 'INFO', 'MEAL', 'Menü Güncellendi', 'Haftalık yemek menüsü güncellendi. Görmek için tıklayın.', '{"weekStart": "2025-01-06"}', 0),
+
+-- Etkinlik Bildirimleri
+(22, 'INFO', 'EVENT', 'Etkinlik Hatırlatma', 'Kayıtlı olduğunuz "Yapay Zeka Workshop" etkinliği yarın saat 14:00''de başlayacak.', '{"eventId": 1}', 0),
+(24, 'SUCCESS', 'EVENT', 'Etkinlik Kaydı', 'Kariyer Günleri etkinliğine kaydınız alındı.', '{"eventId": 2, "registrationId": 5}', 1),
+
+-- Ödeme Bildirimleri
+(25, 'SUCCESS', 'PAYMENT', 'Bakiye Yüklendi', 'Cüzdanınıza 100 TL başarıyla yüklendi.', '{"amount": 100, "transactionId": 1}', 1),
+(22, 'WARNING', 'PAYMENT', 'Düşük Bakiye', 'Cüzdan bakiyeniz 20 TL''nin altına düştü.', '{"balance": 15}', 0),
+
+-- Sistem Bildirimleri
+(1, 'INFO', 'SYSTEM', 'Sistem Güncellemesi', 'Smart Campus sistemi yarın 02:00-04:00 arası bakımda olacaktır.', '{"maintenanceStart": "2025-01-10T02:00:00"}', 0),
+(22, 'INFO', 'SYSTEM', 'Hoş Geldiniz', 'Smart Campus sistemine hoş geldiniz! Profilinizi tamamlayın.', '{}', 1);
+
+SELECT CONCAT('Total Notifications: ', COUNT(*)) AS info FROM notifications;
+
+-- =============================================
+-- Full Seed Complete (All Parts including Part 4)
+-- =============================================
+SELECT 'All seed data inserted successfully! (Part 1 + Part 2 + Part 3 + Part 4)' AS final_status;
 
