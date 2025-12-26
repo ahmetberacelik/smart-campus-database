@@ -685,7 +685,156 @@ INSERT INTO notifications (user_id, type, category, title, message, data_json, i
 SELECT CONCAT('Total Notifications: ', COUNT(*)) AS info FROM notifications;
 
 -- =============================================
--- Full Seed Complete (All Parts including Part 4)
+-- PART 4: Analytics Data - Attendance Sessions
 -- =============================================
-SELECT 'All seed data inserted successfully! (Part 1 + Part 2 + Part 3 + Part 4)' AS final_status;
+INSERT INTO attendance_sessions (section_id, instructor_id, classroom_id, session_date, start_time, end_time, latitude, longitude, geofence_radius, qr_code, qr_code_generated_at, status) VALUES
+-- CENG101-01 Yoklamaları
+(1, 1, 1, DATE_SUB(CURDATE(), INTERVAL 21 DAY), '09:00:00', '10:50:00', 41.10527800, 29.02513900, 15, 'QR-CENG101-W1-1', DATE_SUB(CURDATE(), INTERVAL 21 DAY), 'CLOSED'),
+(1, 1, 1, DATE_SUB(CURDATE(), INTERVAL 19 DAY), '09:00:00', '10:50:00', 41.10527800, 29.02513900, 15, 'QR-CENG101-W1-2', DATE_SUB(CURDATE(), INTERVAL 19 DAY), 'CLOSED'),
+(1, 1, 1, DATE_SUB(CURDATE(), INTERVAL 14 DAY), '09:00:00', '10:50:00', 41.10527800, 29.02513900, 15, 'QR-CENG101-W2-1', DATE_SUB(CURDATE(), INTERVAL 14 DAY), 'CLOSED'),
+(1, 1, 1, DATE_SUB(CURDATE(), INTERVAL 12 DAY), '09:00:00', '10:50:00', 41.10527800, 29.02513900, 15, 'QR-CENG101-W2-2', DATE_SUB(CURDATE(), INTERVAL 12 DAY), 'CLOSED'),
+(1, 1, 1, DATE_SUB(CURDATE(), INTERVAL 7 DAY), '09:00:00', '10:50:00', 41.10527800, 29.02513900, 15, 'QR-CENG101-W3-1', DATE_SUB(CURDATE(), INTERVAL 7 DAY), 'CLOSED'),
+(1, 1, 1, DATE_SUB(CURDATE(), INTERVAL 5 DAY), '09:00:00', '10:50:00', 41.10527800, 29.02513900, 15, 'QR-CENG101-W3-2', DATE_SUB(CURDATE(), INTERVAL 5 DAY), 'CLOSED'),
+-- CENG201-01 Yoklamaları
+(5, 3, 5, DATE_SUB(CURDATE(), INTERVAL 20 DAY), '09:00:00', '10:50:00', 41.10532400, 29.02518500, 15, 'QR-CENG201-W1-1', DATE_SUB(CURDATE(), INTERVAL 20 DAY), 'CLOSED'),
+(5, 3, 5, DATE_SUB(CURDATE(), INTERVAL 18 DAY), '09:00:00', '10:50:00', 41.10532400, 29.02518500, 15, 'QR-CENG201-W1-2', DATE_SUB(CURDATE(), INTERVAL 18 DAY), 'CLOSED'),
+(5, 3, 5, DATE_SUB(CURDATE(), INTERVAL 13 DAY), '09:00:00', '10:50:00', 41.10532400, 29.02518500, 15, 'QR-CENG201-W2-1', DATE_SUB(CURDATE(), INTERVAL 13 DAY), 'CLOSED'),
+(5, 3, 5, DATE_SUB(CURDATE(), INTERVAL 11 DAY), '09:00:00', '10:50:00', 41.10532400, 29.02518500, 15, 'QR-CENG201-W2-2', DATE_SUB(CURDATE(), INTERVAL 11 DAY), 'CLOSED'),
+(5, 3, 5, DATE_SUB(CURDATE(), INTERVAL 6 DAY), '09:00:00', '10:50:00', 41.10532400, 29.02518500, 15, 'QR-CENG201-W3-1', DATE_SUB(CURDATE(), INTERVAL 6 DAY), 'CLOSED'),
+-- EEE101-01 Yoklamaları
+(11, 9, 5, DATE_SUB(CURDATE(), INTERVAL 21 DAY), '11:00:00', '12:50:00', 41.10540000, 29.02530000, 15, 'QR-EEE101-W1-1', DATE_SUB(CURDATE(), INTERVAL 21 DAY), 'CLOSED'),
+(11, 9, 5, DATE_SUB(CURDATE(), INTERVAL 14 DAY), '11:00:00', '12:50:00', 41.10540000, 29.02530000, 15, 'QR-EEE101-W2-1', DATE_SUB(CURDATE(), INTERVAL 14 DAY), 'CLOSED'),
+(11, 9, 5, DATE_SUB(CURDATE(), INTERVAL 7 DAY), '11:00:00', '12:50:00', 41.10540000, 29.02530000, 15, 'QR-EEE101-W3-1', DATE_SUB(CURDATE(), INTERVAL 7 DAY), 'CLOSED'),
+-- ME101-01 Yoklamaları
+(15, 13, 3, DATE_SUB(CURDATE(), INTERVAL 20 DAY), '13:00:00', '14:50:00', 41.10530100, 29.02516200, 15, 'QR-ME101-W1-1', DATE_SUB(CURDATE(), INTERVAL 20 DAY), 'CLOSED'),
+(15, 13, 3, DATE_SUB(CURDATE(), INTERVAL 13 DAY), '13:00:00', '14:50:00', 41.10530100, 29.02516200, 15, 'QR-ME101-W2-1', DATE_SUB(CURDATE(), INTERVAL 13 DAY), 'CLOSED'),
+(15, 13, 3, DATE_SUB(CURDATE(), INTERVAL 6 DAY), '13:00:00', '14:50:00', 41.10530100, 29.02516200, 15, 'QR-ME101-W3-1', DATE_SUB(CURDATE(), INTERVAL 6 DAY), 'CLOSED');
+
+SELECT CONCAT('Total Attendance Sessions: ', COUNT(*)) AS info FROM attendance_sessions;
+
+-- =============================================
+-- PART 4: Analytics Data - Attendance Records
+-- =============================================
+INSERT INTO attendance_records (session_id, student_id, status, check_in_time, check_in_method, latitude, longitude, distance_from_classroom, gps_accuracy) VALUES
+-- CENG101 Session 1-6 (students 1-2)
+(1, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 21 DAY), 'GPS', 41.10528000, 29.02514000, 2.5, 5.0),
+(1, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 21 DAY), 'GPS', 41.10527500, 29.02513500, 1.2, 4.5),
+(2, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 19 DAY), 'QR_CODE', 41.10528100, 29.02514100, 3.0, 6.0),
+(2, 2, 'LATE', DATE_SUB(NOW(), INTERVAL 19 DAY), 'GPS', 41.10527000, 29.02513000, 2.0, 5.0),
+(3, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 14 DAY), 'GPS', 41.10527900, 29.02513800, 1.5, 4.0),
+(3, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 14 DAY), 'GPS', 41.10527600, 29.02513600, 1.8, 4.2),
+(4, 1, 'ABSENT', NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 12 DAY), 'QR_CODE', 41.10527700, 29.02513700, 1.0, 3.5),
+(5, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 7 DAY), 'GPS', 41.10527800, 29.02513900, 0.5, 3.0),
+(5, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 7 DAY), 'GPS', 41.10528200, 29.02514200, 4.0, 6.5),
+(6, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 5 DAY), 'GPS', 41.10527750, 29.02513850, 1.0, 4.0),
+(6, 2, 'LATE', DATE_SUB(NOW(), INTERVAL 5 DAY), 'GPS', 41.10528000, 29.02514000, 2.5, 5.0),
+-- EEE101 (sessions 12-14, student 3)
+(12, 3, 'PRESENT', DATE_SUB(NOW(), INTERVAL 21 DAY), 'GPS', 41.10540200, 29.02530200, 2.0, 5.0),
+(13, 3, 'PRESENT', DATE_SUB(NOW(), INTERVAL 14 DAY), 'QR_CODE', 41.10540100, 29.02530100, 1.5, 4.0),
+(14, 3, 'ABSENT', NULL, NULL, NULL, NULL, NULL, NULL),
+-- ME101 (sessions 15-17, student 4)
+(15, 4, 'PRESENT', DATE_SUB(NOW(), INTERVAL 20 DAY), 'GPS', 41.10530300, 29.02516400, 2.5, 5.5),
+(16, 4, 'LATE', DATE_SUB(NOW(), INTERVAL 13 DAY), 'GPS', 41.10530200, 29.02516300, 2.0, 5.0),
+(17, 4, 'PRESENT', DATE_SUB(NOW(), INTERVAL 6 DAY), 'GPS', 41.10530100, 29.02516200, 1.0, 4.0);
+
+SELECT CONCAT('Total Attendance Records: ', COUNT(*)) AS info FROM attendance_records;
+
+-- =============================================
+-- PART 4: Analytics Data - Meal Reservations
+-- =============================================
+INSERT INTO meal_reservations (user_id, menu_id, cafeteria_id, reservation_date, meal_type, amount, qr_code, is_scholarship_used, status, used_at) VALUES
+-- Bugünkü rezervasyonlar
+(22, 1, 1, CURDATE(), 'LUNCH', 25.00, CONCAT('MR-TODAY-1-', UNIX_TIMESTAMP()), 0, 'RESERVED', NULL),
+(23, 1, 1, CURDATE(), 'LUNCH', 25.00, CONCAT('MR-TODAY-2-', UNIX_TIMESTAMP()), 1, 'USED', NOW()),
+(24, 1, 1, CURDATE(), 'LUNCH', 25.00, CONCAT('MR-TODAY-3-', UNIX_TIMESTAMP()), 0, 'USED', NOW()),
+(25, 5, 2, CURDATE(), 'LUNCH', 22.00, CONCAT('MR-TODAY-4-', UNIX_TIMESTAMP()), 0, 'RESERVED', NULL),
+(2, 2, 1, CURDATE(), 'DINNER', 25.00, CONCAT('MR-TODAY-5-', UNIX_TIMESTAMP()), 0, 'RESERVED', NULL),
+-- Dünkü rezervasyonlar
+(22, 1, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 'LUNCH', 25.00, CONCAT('MR-Y1-1-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(23, 1, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 'LUNCH', 25.00, CONCAT('MR-Y1-2-', UNIX_TIMESTAMP()), 1, 'USED', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(24, 1, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 'LUNCH', 25.00, CONCAT('MR-Y1-3-', UNIX_TIMESTAMP()), 0, 'CANCELLED', NULL),
+(3, 2, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 'DINNER', 25.00, CONCAT('MR-Y1-4-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 1 DAY)),
+-- Geçmiş hafta
+(22, 1, 1, DATE_SUB(CURDATE(), INTERVAL 3 DAY), 'LUNCH', 25.00, CONCAT('MR-W1-1-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(22, 2, 1, DATE_SUB(CURDATE(), INTERVAL 3 DAY), 'DINNER', 25.00, CONCAT('MR-W1-2-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(23, 1, 1, DATE_SUB(CURDATE(), INTERVAL 4 DAY), 'LUNCH', 25.00, CONCAT('MR-W1-3-', UNIX_TIMESTAMP()), 1, 'USED', DATE_SUB(NOW(), INTERVAL 4 DAY)),
+(24, 5, 2, DATE_SUB(CURDATE(), INTERVAL 5 DAY), 'LUNCH', 22.00, CONCAT('MR-W1-4-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(25, 1, 1, DATE_SUB(CURDATE(), INTERVAL 5 DAY), 'LUNCH', 25.00, CONCAT('MR-W1-5-', UNIX_TIMESTAMP()), 1, 'USED', DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(26, 1, 1, DATE_SUB(CURDATE(), INTERVAL 6 DAY), 'LUNCH', 25.00, CONCAT('MR-W1-6-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 6 DAY)),
+(22, 1, 1, DATE_SUB(CURDATE(), INTERVAL 7 DAY), 'LUNCH', 25.00, CONCAT('MR-W2-1-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 7 DAY)),
+(23, 2, 1, DATE_SUB(CURDATE(), INTERVAL 7 DAY), 'DINNER', 25.00, CONCAT('MR-W2-2-', UNIX_TIMESTAMP()), 0, 'USED', DATE_SUB(NOW(), INTERVAL 7 DAY));
+
+SELECT CONCAT('Total Meal Reservations: ', COUNT(*)) AS info FROM meal_reservations;
+
+-- =============================================
+-- PART 4: Analytics Data - Event Registrations
+-- =============================================
+INSERT INTO event_registrations (event_id, user_id, registration_date, qr_code, checked_in, checked_in_at, status, waitlist_position) VALUES
+-- Yazılım Kariyer Günleri (event_id=1)
+(1, 22, DATE_SUB(NOW(), INTERVAL 3 DAY), CONCAT('ER-E1-1-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(1, 23, DATE_SUB(NOW(), INTERVAL 3 DAY), CONCAT('ER-E1-2-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(1, 24, DATE_SUB(NOW(), INTERVAL 2 DAY), CONCAT('ER-E1-3-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(1, 25, DATE_SUB(NOW(), INTERVAL 2 DAY), CONCAT('ER-E1-4-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(1, 26, DATE_SUB(NOW(), INTERVAL 1 DAY), CONCAT('ER-E1-5-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(1, 2, DATE_SUB(NOW(), INTERVAL 4 DAY), CONCAT('ER-E1-6-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(1, 3, DATE_SUB(NOW(), INTERVAL 4 DAY), CONCAT('ER-E1-7-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+-- React.js Workshop (event_id=2)
+(2, 22, DATE_SUB(NOW(), INTERVAL 5 DAY), CONCAT('ER-E2-1-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(2, 23, DATE_SUB(NOW(), INTERVAL 4 DAY), CONCAT('ER-E2-2-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(2, 24, DATE_SUB(NOW(), INTERVAL 3 DAY), CONCAT('ER-E2-3-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(2, 2, DATE_SUB(NOW(), INTERVAL 6 DAY), CONCAT('ER-E2-4-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+-- AI Konferansı (event_id=3)
+(3, 22, DATE_SUB(NOW(), INTERVAL 7 DAY), CONCAT('ER-E3-1-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 23, DATE_SUB(NOW(), INTERVAL 7 DAY), CONCAT('ER-E3-2-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 24, DATE_SUB(NOW(), INTERVAL 6 DAY), CONCAT('ER-E3-3-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 25, DATE_SUB(NOW(), INTERVAL 6 DAY), CONCAT('ER-E3-4-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 26, DATE_SUB(NOW(), INTERVAL 5 DAY), CONCAT('ER-E3-5-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 2, DATE_SUB(NOW(), INTERVAL 8 DAY), CONCAT('ER-E3-6-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 3, DATE_SUB(NOW(), INTERVAL 8 DAY), CONCAT('ER-E3-7-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(3, 4, DATE_SUB(NOW(), INTERVAL 9 DAY), CONCAT('ER-E3-8-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+-- Bahar Şenliği (event_id=4)
+(4, 22, DATE_SUB(NOW(), INTERVAL 2 DAY), CONCAT('ER-E4-1-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(4, 23, DATE_SUB(NOW(), INTERVAL 2 DAY), CONCAT('ER-E4-2-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(4, 24, DATE_SUB(NOW(), INTERVAL 1 DAY), CONCAT('ER-E4-3-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL),
+(4, 25, DATE_SUB(NOW(), INTERVAL 1 DAY), CONCAT('ER-E4-4-', UNIX_TIMESTAMP()), 0, NULL, 'REGISTERED', NULL);
+
+-- Update event registered_count
+UPDATE events SET registered_count = (SELECT COUNT(*) FROM event_registrations WHERE event_id = 1 AND status = 'REGISTERED') WHERE id = 1;
+UPDATE events SET registered_count = (SELECT COUNT(*) FROM event_registrations WHERE event_id = 2 AND status = 'REGISTERED') WHERE id = 2;
+UPDATE events SET registered_count = (SELECT COUNT(*) FROM event_registrations WHERE event_id = 3 AND status = 'REGISTERED') WHERE id = 3;
+UPDATE events SET registered_count = (SELECT COUNT(*) FROM event_registrations WHERE event_id = 4 AND status = 'REGISTERED') WHERE id = 4;
+
+SELECT CONCAT('Total Event Registrations: ', COUNT(*)) AS info FROM event_registrations;
+
+-- =============================================
+-- PART 4: Analytics Data - Enrollment Grades (GPA Distribution)
+-- =============================================
+-- Update existing enrollments with grades
+UPDATE enrollments SET midterm_grade = 85.00, final_grade = 90.00, homework_grade = 88.00, letter_grade = 'AA', grade_point = 4.00, status = 'COMPLETED' WHERE id = 1;
+UPDATE enrollments SET midterm_grade = 78.00, final_grade = 82.00, homework_grade = 80.00, letter_grade = 'BA', grade_point = 3.50, status = 'COMPLETED' WHERE id = 2;
+UPDATE enrollments SET midterm_grade = 92.00, final_grade = 95.00, homework_grade = 90.00, letter_grade = 'AA', grade_point = 4.00, status = 'COMPLETED' WHERE id = 3;
+UPDATE enrollments SET midterm_grade = 70.00, final_grade = 75.00, homework_grade = 72.00, letter_grade = 'BB', grade_point = 3.00, status = 'COMPLETED' WHERE id = 4;
+UPDATE enrollments SET midterm_grade = 65.00, final_grade = 68.00, homework_grade = 70.00, letter_grade = 'CB', grade_point = 2.50, status = 'COMPLETED' WHERE id = 5;
+UPDATE enrollments SET midterm_grade = 55.00, final_grade = 60.00, homework_grade = 58.00, letter_grade = 'CC', grade_point = 2.00, status = 'COMPLETED' WHERE id = 6;
+UPDATE enrollments SET midterm_grade = 80.00, final_grade = 85.00, homework_grade = 82.00, letter_grade = 'BA', grade_point = 3.50, status = 'COMPLETED' WHERE id = 7;
+
+-- Add more enrollments with grades for better distribution
+INSERT INTO enrollments (student_id, section_id, status, midterm_grade, final_grade, homework_grade, letter_grade, grade_point) VALUES
+(1, 5, 'COMPLETED', 88.00, 92.00, 85.00, 'AA', 4.00),
+(1, 7, 'COMPLETED', 75.00, 78.00, 80.00, 'BB', 3.00),
+(2, 5, 'COMPLETED', 95.00, 98.00, 92.00, 'AA', 4.00),
+(2, 7, 'COMPLETED', 82.00, 88.00, 85.00, 'BA', 3.50),
+(3, 12, 'COMPLETED', 60.00, 65.00, 62.00, 'CC', 2.00),
+(4, 16, 'COMPLETED', 72.00, 78.00, 75.00, 'CB', 2.50),
+(5, 20, 'COMPLETED', 85.00, 88.00, 82.00, 'BA', 3.50),
+(3, 13, 'FAILED', 35.00, 40.00, 45.00, 'FF', 0.00);
+
+SELECT CONCAT('Total Enrollments with grades: ', COUNT(*)) AS info FROM enrollments WHERE letter_grade IS NOT NULL;
+
+-- =============================================
+-- Full Seed Complete (All Parts including Part 4 Analytics)
+-- =============================================
+SELECT 'All seed data inserted successfully! (Part 1 + Part 2 + Part 3 + Part 4 + Analytics)' AS final_status;
+
 
