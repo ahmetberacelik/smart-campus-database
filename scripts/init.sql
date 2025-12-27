@@ -591,6 +591,18 @@ CREATE TABLE IF NOT EXISTS notification_preferences (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================
+-- V25: Fix attendance_sessions time columns
+-- Fixes: "Data truncation: Incorrect datetime value" error
+-- Changes start_time and end_time columns from DATETIME/TIMESTAMP to TIME type
+-- =============================================
+
+-- Fix start_time and end_time columns to TIME type (if they are not already)
+-- This is safe to run multiple times - if columns are already TIME type, it won't cause issues
+ALTER TABLE attendance_sessions 
+MODIFY COLUMN start_time TIME NOT NULL COMMENT 'Başlangıç saati',
+MODIFY COLUMN end_time TIME NULL COMMENT 'Bitiş saati';
+
+-- =============================================
 -- Full Initialization Complete (Part 1 + 2 + 3 + 4)
 -- =============================================
 SELECT 'Smart Campus Database initialized successfully! (Part 1 + Part 2 + Part 3 + Part 4)' AS status;
