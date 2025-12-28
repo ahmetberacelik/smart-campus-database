@@ -296,7 +296,7 @@ INSERT INTO classrooms (building, room_number, capacity, latitude, longitude, fe
 
 -- =============================================
 -- 08: Course Sections (Ders Bölümleri) - Part 2
--- HER DERS TEK HOCA TARAFINDAN VERİLİYOR
+-- HER DERS HER DÖNEMDE YALNIZCA TEK SECTION OLARAK AÇILIR
 -- 
 -- Ders-Hoca Atamaları:
 -- CENG101 (course_id=1)  → faculty_id=1  (Ahmet Yılmaz)
@@ -326,12 +326,10 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 -- 2024-2025 AKADEMİK YILI (Aktif Dönem)
 -- =============================================
 
--- 2024 FALL (Güz Dönemi) - AKTİF
+-- 2024 FALL (Güz Dönemi) - AKTİF - Section ID: 1-20
 -- CENG Dersleri
 (1, '01', 'FALL', 2024, 1, 1, 60, 45, '{"slots": [{"day": "MONDAY", "start": "09:00", "end": "10:50", "classroom_id": 1}, {"day": "WEDNESDAY", "start": "09:00", "end": "10:50", "classroom_id": 1}]}'),
-(1, '02', 'FALL', 2024, 1, 3, 60, 52, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "10:50", "classroom_id": 3}, {"day": "THURSDAY", "start": "09:00", "end": "10:50", "classroom_id": 3}]}'),
 (2, '01', 'FALL', 2024, 2, 7, 30, 25, '{"slots": [{"day": "FRIDAY", "start": "13:00", "end": "15:50", "classroom_id": 7}]}'),
-(2, '02', 'FALL', 2024, 2, 8, 25, 20, '{"slots": [{"day": "THURSDAY", "start": "13:00", "end": "15:50", "classroom_id": 8}]}'),
 (3, '01', 'FALL', 2024, 3, 5, 50, 38, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}, {"day": "THURSDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}]}'),
 (4, '01', 'FALL', 2024, 4, 7, 40, 35, '{"slots": [{"day": "MONDAY", "start": "11:00", "end": "12:50", "classroom_id": 7}, {"day": "WEDNESDAY", "start": "11:00", "end": "12:50", "classroom_id": 7}]}'),
 (5, '01', 'FALL', 2024, 5, 2, 40, 32, '{"slots": [{"day": "MONDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}, {"day": "WEDNESDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}]}'),
@@ -358,10 +356,9 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 (20, '01', 'FALL', 2024, 20, 11, 50, 35, '{"slots": [{"day": "WEDNESDAY", "start": "14:00", "end": "16:50", "classroom_id": 11}]}'),
 
 -- =============================================
--- 2025 SPRING (Bahar Dönemi) - Planlanan
+-- 2025 SPRING (Bahar Dönemi) - Planlanan - Section ID: 21-33
 -- =============================================
 (3, '01', 'SPRING', 2025, 3, 5, 50, 0, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}, {"day": "THURSDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}]}'),
-(3, '02', 'SPRING', 2025, 3, 6, 45, 0, '{"slots": [{"day": "MONDAY", "start": "13:00", "end": "14:50", "classroom_id": 6}, {"day": "WEDNESDAY", "start": "13:00", "end": "14:50", "classroom_id": 6}]}'),
 (4, '01', 'SPRING', 2025, 4, 7, 40, 0, '{"slots": [{"day": "MONDAY", "start": "09:00", "end": "10:50", "classroom_id": 7}, {"day": "WEDNESDAY", "start": "09:00", "end": "10:50", "classroom_id": 7}]}'),
 (7, '01', 'SPRING', 2025, 7, 2, 35, 0, '{"slots": [{"day": "TUESDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}, {"day": "THURSDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}]}'),
 (8, '01', 'SPRING', 2025, 8, 8, 35, 0, '{"slots": [{"day": "FRIDAY", "start": "13:00", "end": "15:50", "classroom_id": 8}]}'),
@@ -376,7 +373,7 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 (20, '01', 'SPRING', 2025, 20, 11, 50, 0, '{"slots": [{"day": "WEDNESDAY", "start": "09:00", "end": "11:50", "classroom_id": 11}]}'),
 
 -- =============================================
--- 2025 SUMMER (Yaz Dönemi) - Planlanan
+-- 2025 SUMMER (Yaz Dönemi) - Planlanan - Section ID: 34-37
 -- =============================================
 (1, '01', 'SUMMER', 2025, 1, 2, 30, 0, '{"slots": [{"day": "MONDAY", "start": "09:00", "end": "12:50", "classroom_id": 2}, {"day": "WEDNESDAY", "start": "09:00", "end": "12:50", "classroom_id": 2}]}'),
 (3, '01', 'SUMMER', 2025, 3, 4, 25, 0, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "12:50", "classroom_id": 4}, {"day": "THURSDAY", "start": "09:00", "end": "12:50", "classroom_id": 4}]}'),
@@ -387,11 +384,9 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 -- 2025-2026 AKADEMİK YILI
 -- =============================================
 
--- 2025 FALL (Güz Dönemi) - Planlanan
+-- 2025 FALL (Güz Dönemi) - Planlanan - Section ID: 38-57
 (1, '01', 'FALL', 2025, 1, 1, 60, 0, '{"slots": [{"day": "MONDAY", "start": "09:00", "end": "10:50", "classroom_id": 1}, {"day": "WEDNESDAY", "start": "09:00", "end": "10:50", "classroom_id": 1}]}'),
-(1, '02', 'FALL', 2025, 1, 3, 60, 0, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "10:50", "classroom_id": 3}, {"day": "THURSDAY", "start": "09:00", "end": "10:50", "classroom_id": 3}]}'),
 (2, '01', 'FALL', 2025, 2, 7, 30, 0, '{"slots": [{"day": "FRIDAY", "start": "13:00", "end": "15:50", "classroom_id": 7}]}'),
-(2, '02', 'FALL', 2025, 2, 8, 25, 0, '{"slots": [{"day": "THURSDAY", "start": "13:00", "end": "15:50", "classroom_id": 8}]}'),
 (3, '01', 'FALL', 2025, 3, 5, 50, 0, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}, {"day": "THURSDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}]}'),
 (4, '01', 'FALL', 2025, 4, 7, 40, 0, '{"slots": [{"day": "MONDAY", "start": "11:00", "end": "12:50", "classroom_id": 7}, {"day": "WEDNESDAY", "start": "11:00", "end": "12:50", "classroom_id": 7}]}'),
 (5, '01', 'FALL', 2025, 5, 2, 40, 0, '{"slots": [{"day": "MONDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}, {"day": "WEDNESDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}]}'),
@@ -411,9 +406,8 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 (19, '01', 'FALL', 2025, 19, 11, 60, 0, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "11:50", "classroom_id": 11}]}'),
 (20, '01', 'FALL', 2025, 20, 11, 50, 0, '{"slots": [{"day": "WEDNESDAY", "start": "14:00", "end": "16:50", "classroom_id": 11}]}'),
 
--- 2026 SPRING (Bahar Dönemi) - Planlanan
+-- 2026 SPRING (Bahar Dönemi) - Planlanan - Section ID: 58-70
 (3, '01', 'SPRING', 2026, 3, 5, 50, 0, '{"slots": [{"day": "TUESDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}, {"day": "THURSDAY", "start": "09:00", "end": "10:50", "classroom_id": 5}]}'),
-(3, '02', 'SPRING', 2026, 3, 6, 45, 0, '{"slots": [{"day": "MONDAY", "start": "13:00", "end": "14:50", "classroom_id": 6}, {"day": "WEDNESDAY", "start": "13:00", "end": "14:50", "classroom_id": 6}]}'),
 (4, '01', 'SPRING', 2026, 4, 7, 40, 0, '{"slots": [{"day": "MONDAY", "start": "09:00", "end": "10:50", "classroom_id": 7}, {"day": "WEDNESDAY", "start": "09:00", "end": "10:50", "classroom_id": 7}]}'),
 (7, '01', 'SPRING', 2026, 7, 2, 35, 0, '{"slots": [{"day": "TUESDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}, {"day": "THURSDAY", "start": "13:00", "end": "14:50", "classroom_id": 2}]}'),
 (8, '01', 'SPRING', 2026, 8, 8, 35, 0, '{"slots": [{"day": "FRIDAY", "start": "13:00", "end": "15:50", "classroom_id": 8}]}'),
@@ -430,25 +424,25 @@ INSERT INTO course_sections (course_id, section_number, semester, year, instruct
 -- =============================================
 -- 09: Enrollments (Ders Kayıtları) - Part 2
 -- Öğrenciler 2024 FALL dönemindeki derslere kayıtlı
--- Section ID'ler 2024 FALL için: 1-22 arası
+-- Section ID'ler 2024 FALL için: 1-20 (her ders tek section)
 -- =============================================
 INSERT INTO enrollments (student_id, section_id, status) VALUES
 -- Öğrenci 1 (Ali Kaya - CENG) - CENG101 ve CENG102
 (1, 1, 'ENROLLED'),  -- CENG101 Section 01
-(1, 3, 'ENROLLED'),  -- CENG102 Section 01
+(1, 2, 'ENROLLED'),  -- CENG102 Section 01
 
 -- Öğrenci 2 (Zeynep Çelik - CENG) - CENG101 ve CENG102
 (2, 1, 'ENROLLED'),  -- CENG101 Section 01
-(2, 3, 'ENROLLED'),  -- CENG102 Section 01
+(2, 2, 'ENROLLED'),  -- CENG102 Section 01
 
 -- Öğrenci 3 (Mehmet Öztürk - EEE) - EEE101
-(3, 11, 'ENROLLED'),  -- EEE101 Section 01
+(3, 9, 'ENROLLED'),  -- EEE101 Section 01
 
 -- Öğrenci 4 (Fatma Şahin - ME) - ME101
-(4, 15, 'ENROLLED'),  -- ME101 Section 01
+(4, 13, 'ENROLLED'),  -- ME101 Section 01
 
 -- Öğrenci 5 (Emre Arslan - BA) - BA101
-(5, 19, 'ENROLLED');  -- BA101 Section 01
+(5, 17, 'ENROLLED');  -- BA101 Section 01
 
 -- =============================================
 -- Seed Complete (Part 1 + Part 2)
