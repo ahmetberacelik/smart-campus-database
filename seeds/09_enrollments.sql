@@ -2,45 +2,95 @@
 -- Part 2: Akademik Yönetim
 -- Tüm 5 öğrenci 2024 FALL dönemindeki derslere kayıtlı
 
--- 2024 FALL Section ID'leri (08_course_sections.sql'deki sıraya göre):
--- ID 50: CENG101 (course_id=1)
--- ID 51: CENG102 (course_id=2)
--- ID 52: CENG201 (course_id=3)
--- ID 53: CENG202 (course_id=4)
--- ID 54: CENG301 (course_id=5)
--- ID 55: CENG302 (course_id=6)
--- ID 56: CENG401 (course_id=7)
--- ID 57: CENG402 (course_id=8)
--- ID 58: EEE101 (course_id=9)
--- ID 59: EEE201 (course_id=10)
--- ID 60: EEE301 (course_id=11)
--- ID 61: EEE401 (course_id=12)
--- ID 62: ME101 (course_id=13)
--- ID 63: ME201 (course_id=14)
--- ID 64: ME301 (course_id=15)
--- ID 65: ME401 (course_id=16)
--- ID 66: BA101 (course_id=17)
--- ID 67: BA201 (course_id=18)
--- ID 68: BA301 (course_id=19)
--- ID 69: BA401 (course_id=20)
+-- Öğrenci user ID'leri (users tablosundaki sıralama):
+-- user_id=21: Mehmet Demir (CENG öğrencisi)
+-- user_id=22: Zeynep Çelik (CENG öğrencisi)
+-- user_id=23: Ali Öztürk (EEE öğrencisi)
+-- user_id=24: Fatma Şahin (ME öğrencisi)
+-- user_id=25: Emre Aydın (BA öğrencisi)
 
-INSERT INTO enrollments (student_id, section_id, status) VALUES
--- Öğrenci 1 (Mehmet Demir) - CENG öğrencisi
-(1, 50, 'ENROLLED'),  -- CENG101
-(1, 51, 'ENROLLED'),  -- CENG102
+-- 2024 FALL dönemi dersleri için enrollment kayıtları
+-- section_id'leri dinamik olarak sorgula (hardcoded ID'ler veritabanına bağlı olarak değişebilir)
 
--- Öğrenci 2 (Zeynep Çelik) - CENG öğrencisi
-(2, 50, 'ENROLLED'),  -- CENG101
-(2, 51, 'ENROLLED'),  -- CENG102
+-- Önce mevcut enrollments'ları temizle (yeniden oluşturmak için)
+DELETE FROM enrollments WHERE student_id IN (21, 22, 23, 24, 25);
 
--- Öğrenci 3 (Ali Öztürk) - EEE öğrencisi
-(3, 58, 'ENROLLED'),  -- EEE101
-(3, 59, 'ENROLLED'),  -- EEE201
+-- CENG öğrencileri (Mehmet Demir - user_id=21, Zeynep Çelik - user_id=22)
+-- CENG101 (course_id=1), CENG102 (course_id=2), CENG301 (course_id=5) derslerine kayıt
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 21, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 1 AND cs.semester = 'FALL' AND cs.year = 2024;
 
--- Öğrenci 4 (Fatma Şahin) - ME öğrencisi
-(4, 62, 'ENROLLED'),  -- ME101
-(4, 63, 'ENROLLED'),  -- ME201
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 21, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 2 AND cs.semester = 'FALL' AND cs.year = 2024;
 
--- Öğrenci 5 (Emre Aydın) - BA öğrencisi
-(5, 66, 'ENROLLED'),  -- BA101
-(5, 67, 'ENROLLED'); -- BA201
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 22, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 1 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 22, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 2 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 22, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 5 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+-- EEE öğrencisi (Ali Öztürk - user_id=23)
+-- EEE101 (course_id=9), EEE201 (course_id=10) derslerine kayıt
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 23, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 9 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 23, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 10 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+-- ME öğrencisi (Fatma Şahin - user_id=24)
+-- ME101 (course_id=13), ME201 (course_id=14) derslerine kayıt
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 24, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 13 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 24, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 14 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+-- BA öğrencisi (Emre Aydın - user_id=25)
+-- BA101 (course_id=17), BA201 (course_id=18) derslerine kayıt
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 25, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 17 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+INSERT INTO enrollments (student_id, section_id, status)
+SELECT 25, cs.id, 'ENROLLED'
+FROM course_sections cs
+WHERE cs.course_id = 18 AND cs.semester = 'FALL' AND cs.year = 2024;
+
+-- Enrollment kayıtlarını kontrol et
+SELECT 
+    e.id as enrollment_id,
+    u.first_name,
+    u.last_name,
+    c.code as course_code,
+    c.name as course_name,
+    cs.semester,
+    cs.year,
+    e.status
+FROM enrollments e
+JOIN users u ON e.student_id = u.id
+JOIN course_sections cs ON e.section_id = cs.id
+JOIN courses c ON cs.course_id = c.id
+WHERE e.student_id IN (21, 22, 23, 24, 25)
+ORDER BY u.last_name, c.code;
