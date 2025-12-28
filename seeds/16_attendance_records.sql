@@ -9,27 +9,27 @@
 
 -- CENG101 yoklamaları için kayıtlar (session 1-6, students 1-2)
 INSERT INTO attendance_records (session_id, student_id, status, check_in_time, check_in_method, latitude, longitude, distance_from_classroom, gps_accuracy) VALUES
--- Session 1 (21 gün önce)
+-- Session 1 (21 gün önce) - CENG101
 (1, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 21 DAY), 'GPS', 41.10528000, 29.02514000, 2.5, 5.0),
 (1, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 21 DAY), 'GPS', 41.10527500, 29.02513500, 1.2, 4.5),
 
--- Session 2 (19 gün önce)
+-- Session 2 (19 gün önce) - CENG101
 (2, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 19 DAY), 'QR_CODE', 41.10528100, 29.02514100, 3.0, 6.0),
 (2, 2, 'LATE', DATE_SUB(NOW(), INTERVAL 19 DAY), 'GPS', 41.10527000, 29.02513000, 2.0, 5.0),
 
--- Session 3 (14 gün önce)
+-- Session 3 (14 gün önce) - CENG101
 (3, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 14 DAY), 'GPS', 41.10527900, 29.02513800, 1.5, 4.0),
 (3, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 14 DAY), 'GPS', 41.10527600, 29.02513600, 1.8, 4.2),
 
--- Session 4 (12 gün önce)
+-- Session 4 (12 gün önce) - CENG101
 (4, 1, 'ABSENT', NULL, NULL, NULL, NULL, NULL, NULL),
 (4, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 12 DAY), 'QR_CODE', 41.10527700, 29.02513700, 1.0, 3.5),
 
--- Session 5 (7 gün önce)
+-- Session 5 (7 gün önce) - CENG101
 (5, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 7 DAY), 'GPS', 41.10527800, 29.02513900, 0.5, 3.0),
 (5, 2, 'PRESENT', DATE_SUB(NOW(), INTERVAL 7 DAY), 'GPS', 41.10528200, 29.02514200, 4.0, 6.5),
 
--- Session 6 (5 gün önce)
+-- Session 6 (5 gün önce) - CENG101
 (6, 1, 'PRESENT', DATE_SUB(NOW(), INTERVAL 5 DAY), 'GPS', 41.10527750, 29.02513850, 1.0, 4.0),
 (6, 2, 'LATE', DATE_SUB(NOW(), INTERVAL 5 DAY), 'GPS', 41.10528000, 29.02514000, 2.5, 5.0),
 
